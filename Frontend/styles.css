@@ -1,0 +1,434 @@
+/* ==========================================================
+   Stock tracker: clean and minimal
+   White page, neutral greys, one dark action color.
+   Red is used only for low or sold-out stock.
+   ========================================================== */
+
+/* ---------- Tokens (change colors here) ---------- */
+:root {
+  --bg: #ffffff;
+  --subtle: #f6f7f9;
+  --line: #e5e7eb;
+  --line-strong: #cfd4dc;
+  --ink: #1f2328;
+  --muted: #5b6470;
+  --primary: #1f2328;
+  --primary-hover: #3a414b;
+  --on-primary: #ffffff;
+  --focus: #2563eb;
+  --low: #b42318;
+  --low-bg: #fef3f2;
+
+  --font: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --radius: 6px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #16181d;
+    --subtle: #1d2026;
+    --line: #2c3038;
+    --line-strong: #414753;
+    --ink: #e8eaed;
+    --muted: #a0a7b3;
+    --primary: #e8eaed;
+    --primary-hover: #ffffff;
+    --on-primary: #16181d;
+    --focus: #6ea8fe;
+    --low: #ff9a8f;
+    --low-bg: #3a1f1d;
+  }
+}
+
+/* ---------- Base ---------- */
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+main {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 48px 20px 80px;
+}
+
+[hidden] { display: none !important; }
+
+/* Text for screen readers only */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+button, input { font: inherit; color: inherit; }
+button { cursor: pointer; }
+
+/* ---------- Header ---------- */
+.masthead h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.masthead p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+/* ---------- Totals ---------- */
+.totals {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 40px;
+  margin: 28px 0 32px;
+  padding: 0 0 24px;
+  border-bottom: 1px solid var(--line);
+}
+
+.totals > div {
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.totals dt {
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.totals dd {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+  font-variant-numeric: tabular-nums;
+}
+
+.totals dd.is-low { color: var(--low); }
+
+/* ---------- Add / edit form ---------- */
+.entry { margin-bottom: 40px; }
+
+.entry h2 {
+  margin: 0 0 12px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr auto;
+  gap: 12px;
+  align-items: end;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--muted);
+  font-size: 0.875rem;
+}
+
+.field input {
+  width: 100%;
+  min-height: 40px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+.field input::placeholder { color: var(--muted); opacity: 0.7; }
+
+.field input:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 0;
+  border-color: var(--focus);
+}
+
+/* Edit mode: the form gets a panel so it's clear you're not adding */
+.entry.is-editing {
+  padding: 16px;
+  background: var(--subtle);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+/* Error message under the form */
+.msg {
+  min-height: 1.5em;
+  margin: 10px 0 0;
+  color: var(--low);
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+/* ---------- Buttons ---------- */
+.actions { display: flex; gap: 8px; }
+
+.btn {
+  min-height: 40px;
+  padding: 8px 18px;
+  background: var(--primary);
+  color: var(--on-primary);
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s ease;
+}
+
+.btn:hover { background: var(--primary-hover); }
+.btn:active { transform: translateY(1px); }
+
+.btn.ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-strong);
+}
+
+.btn.ghost:hover { background: var(--subtle); }
+
+/* ---------- Search and filter ---------- */
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+#search {
+  flex: 1 1 220px;
+  max-width: 320px;
+  min-height: 40px;
+  padding: 8px 12px;
+  background: var(--bg);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+}
+
+#search:focus {
+  outline: 2px solid var(--focus);
+  outline-offset: 0;
+  border-color: var(--focus);
+}
+
+.filter { display: flex; gap: 4px; }
+
+.filter button {
+  min-height: 40px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-weight: 500;
+  transition: background-color 0.15s ease;
+}
+
+.filter button:hover { background: var(--subtle); }
+
+.filter button[aria-pressed="true"] {
+  background: var(--subtle);
+  color: var(--ink);
+}
+
+/* ---------- Table ---------- */
+.table-wrap { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 14px 12px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid var(--line);
+}
+
+th {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom-color: var(--line-strong);
+}
+
+th:first-child, td:first-child { padding-left: 0; }
+th:last-child, td:last-child { padding-right: 0; }
+
+.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+tbody tr:last-child td { border-bottom: 0; }
+
+.name { font-weight: 500; }
+
+.sub {
+  display: block;
+  color: var(--muted);
+  font-size: 0.875rem;
+  font-weight: 400;
+}
+
+/* Status badge: shown only when stock is low or out */
+.badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 8px;
+  background: var(--low-bg);
+  color: var(--low);
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  vertical-align: 1px;
+}
+
+/* Low stock: JS adds class="low" to the <tr> */
+tr.low td.qty {
+  color: var(--low);
+  font-weight: 600;
+}
+
+/* Empty state */
+td.empty {
+  padding: 32px 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Quantity briefly highlights after a sell, add or edit */
+@keyframes flash {
+  from { background: var(--subtle); }
+  to   { background: transparent; }
+}
+
+td.flash { animation: flash 0.9s ease-out; }
+
+/* ---------- Row actions ---------- */
+.row-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.row-actions button {
+  min-height: 36px;
+  padding: 4px 12px;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.row-actions button:hover:not(:disabled) {
+  background: var(--subtle);
+  color: var(--ink);
+}
+
+.row-actions .sell {
+  border-color: var(--line-strong);
+  color: var(--ink);
+}
+
+.row-actions .sell:disabled {
+  border-color: var(--line);
+  color: var(--muted);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.row-actions .danger:hover { color: var(--low); background: var(--low-bg); }
+
+/* Bigger touch targets on touch screens */
+@media (pointer: coarse) {
+  .row-actions button,
+  .filter button { min-height: 44px; }
+}
+
+/* ---------- Tablet ---------- */
+@media (max-width: 720px) {
+  .fields { grid-template-columns: 1fr 1fr; }
+  .field:first-child { grid-column: 1 / -1; }
+  .fields .actions { grid-column: 1 / -1; }
+  .actions .btn { flex: 1; }
+}
+
+/* ---------- Phone ---------- */
+@media (max-width: 560px) {
+  main { padding: 28px 16px 56px; }
+  .totals { gap: 8px 28px; }
+  #search { max-width: none; }
+
+  /* Rows become stacked: name on top, quantity and price, then actions */
+  thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  table, tbody { display: block; }
+
+  tbody tr {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4px 12px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  tbody tr:last-child { border-bottom: 0; }
+
+  tbody td {
+    display: block;
+    padding: 0;
+    border: 0;
+  }
+
+  tbody td:first-child { grid-column: 1 / -1; }
+
+  tbody td.num { text-align: left; }
+  tbody td.qty::before { content: "Quantity "; color: var(--muted); font-weight: 400; }
+  tbody td.num:not(.qty)::before { content: "Price "; color: var(--muted); }
+  tbody td.num:not(.qty) { text-align: right; }
+
+  tbody td:last-child { grid-column: 1 / -1; margin-top: 8px; }
+  .row-actions { justify-content: flex-start; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; }
+}

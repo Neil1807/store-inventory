@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stock</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main>
+
+    <header class="masthead">
+      <h1>Stock</h1>
+      <p>Track what you have, what it costs and what needs reordering.</p>
+    </header>
+
+    <!-- Totals (filled in by script.js) -->
+    <dl class="totals" aria-label="Totals">
+      <div><dt>Items</dt><dd id="tItems">0</dd></div>
+      <div><dt>Units in stock</dt><dd id="tUnits">0</dd></div>
+      <div><dt>Stock value</dt><dd id="tValue">$0.00</dd></div>
+      <div><dt>Need restocking</dt><dd id="tLow">0</dd></div>
+    </dl>
+
+    <!-- Add / edit item form -->
+    <form class="entry" id="itemForm" novalidate>
+      <h2 id="formTitle">Add an item</h2>
+      <div class="fields">
+        <div class="field">
+          <label for="name">Item name</label>
+          <input id="name" name="name" autocomplete="off" placeholder="Rice 5kg">
+        </div>
+        <div class="field">
+          <label for="qty">Quantity</label>
+          <input id="qty" name="qty" type="number" inputmode="numeric" min="0" step="1" placeholder="12">
+        </div>
+        <div class="field">
+          <label for="price">Price each</label>
+          <input id="price" name="price" type="number" inputmode="decimal" min="0" step="0.01" placeholder="8.00">
+        </div>
+        <div class="field">
+          <label for="restock">Restock at</label>
+          <input id="restock" name="restock" type="number" inputmode="numeric" min="0" step="1" value="5">
+        </div>
+        <div class="actions">
+          <button class="btn" type="submit" id="submitBtn">Add item</button>
+          <button class="btn ghost" type="button" id="cancelBtn" hidden>Cancel</button>
+        </div>
+      </div>
+      <p class="msg" id="msg" role="alert"></p>
+    </form>
+
+    <!-- Search and filter -->
+    <div class="tools">
+      <input id="search" type="search" placeholder="Search items" aria-label="Search items" autocomplete="off">
+      <div class="filter" role="group" aria-label="Filter items">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        <button type="button" id="filterLow" data-filter="low" aria-pressed="false">Low stock (0)</button>
+      </div>
+    </div>
+
+    <!-- Item table (rows are created by script.js) -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Item</th>
+            <th scope="col" class="num">Quantity</th>
+            <th scope="col" class="num">Price</th>
+            <th scope="col"><span class="visually-hidden">Actions</span></th>
+          </tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
